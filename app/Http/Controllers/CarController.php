@@ -46,73 +46,70 @@ class CarController extends Controller
 
     public function store(Request $request){
 
+        $hash =  $request->header('Authorization', null);
+        $jwtAuth = new JWTAuth();
+        $checkToken = $jwtAuth->checkToken($hash);
 
-        return response()->json('En store', 200);
-        die();
-        // $hash =  $request->header('Authorization', null);
-        // $jwtAuth = new JWTAuth();
-        // $checkToken = $jwtAuth->checkToken($hash);
+        if ($checkToken) {
+            //Recoger los datos por POST
+            $json = $request->input('json', null);
+            $params = json_decode($json);
+            $params_array = json_decode($json, true);
 
-        // if ($checkToken) {
-        //     //Recoger los datos por POST
-        //     $json = $request->input('json', null);
-        //     $params = json_decode($json);
-        //     $params_array = json_decode($json, true);
-
-        //     //Conseguir el usuario identificado
-        //     $user = $jwtAuth->checkToken($hash, true);
+            //Conseguir el usuario identificado
+            $user = $jwtAuth->checkToken($hash, true);
 
 
-        //     // Validación de datos
+            // Validación de datos
 
-        //     //Opcion con validacion de laravel
+            //Opcion con validacion de laravel
 
-        //     $validate = \Validator::make($params_array, [
-        //         'title' => 'required',
-        //         'description' => 'required',
-        //         'price' => 'required',
-        //         'status' => 'required',
-        //     ]);
+            $validate = \Validator::make($params_array, [
+                'title' => 'required',
+                'description' => 'required',
+                'price' => 'required',
+                'status' => 'required',
+            ]);
 
-        //     if ($validate->fails()) {
-        //         return response()->json($validate->errors(), 400);
-        //     }
+            if ($validate->fails()) {
+                return response()->json($validate->errors(), 400);
+            }
 
-        //     // if ( // Opcion con issets
-        //     //     isset($params->title) &&
-        //     //     isset($params->description) &&
-        //     //     isset($params->price) &&
-        //     //     isset($params->status)
-        //     // ){
-        //     //     # code...
-        //     // }
+            // if ( // Opcion con issets
+            //     isset($params->title) &&
+            //     isset($params->description) &&
+            //     isset($params->price) &&
+            //     isset($params->status)
+            // ){
+            //     # code...
+            // }
 
-        //     //Guarda el coche
-        //     $car = new Car();
+            //Guarda el coche
+            $car = new Car();
 
-        //     $car->user_id = $user->sub;
+            $car->user_id = $user->sub;
 
-        //     $car->title =  $params->title;
-        //     $car->description =  $params->description;
-        //     $car->price =  $params->price;
-        //     $car->status =  $params->status;
+            $car->title =  $params->title;
+            $car->description =  $params->description;
+            $car->price =  $params->price;
+            $car->status =  $params->status;
 
-        //     $car->save();
+            $car->save();
 
-        //     $data = array(
-        //         'car' => $car,
-        //         'status' => 'success',
-        //         'code' => 200
-        //     );
-        // } else {
-        //     $data = array(
-        //         'message' => 'Login incorrecto',
-        //         'status' => 'error',
-        //         'code' => 300
-        //     );
-        // }
+            $data = array(
+                'car' => $car,
+                'status' => 'success',
+                'code' => 200
+            );
+        } else {
+            $data = array(
+                'message' => 'Login incorrecto',
+                'status' => 'error',
+                'code' => 300
+            );
+        }
 
-        // return response()->json($data, 200);
+        return response()->json($data, 200);
     }
 
     public function update($id, Request $request){
