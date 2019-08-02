@@ -19,8 +19,6 @@ Route::get('/', function () {
 Route::post('/api/register', 'UserController@register')->middleware('cors');
 Route::post('/api/login', 'UserController@login')->middleware('cors');
 
-Route::post('/api/cars', 'CarController@store')->middleware('cors');
-
-// Route::group(['middleware' => 'cors'], function (){
-//     Route::resource('/api/cars', 'CarController');
-// });
+Route::group(['middleware' => 'cors'], function (){
+    Route::resource('/api/cars', 'CarController');
+});

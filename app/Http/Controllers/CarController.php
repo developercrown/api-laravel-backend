@@ -123,7 +123,6 @@ class CarController extends Controller
             $params = json_decode($json);
             $params_array = json_decode($json, true);
 
-
             // Validación de datos
             $validate = \Validator::make($params_array, [
                 'title' => 'required',
@@ -137,6 +136,13 @@ class CarController extends Controller
                 die();
             }
 
+            unset($params_array['user']);
+            unset($params_array['userId']);
+            unset($params_array['id']);
+            unset($params_array['createdAt']);
+            unset($params_array['updatedAt']);
+            // var_dump($params_array);
+
             // Actualizar el coche
             $car = Car::where('id', $id)->update($params_array);
 
@@ -146,7 +152,7 @@ class CarController extends Controller
                 'code' => 200
             );
 
-        }else{
+        } else {
             $data = array(
                 'message' => 'Acceso incorrecto',
                 'status' => 'error',
